@@ -138,7 +138,7 @@ const App = () => {
            </p>
          </div>
          
-         <form action="https://formspree.io/f/FORM_ID" method="POST" className="max-w-md mx-auto bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+         <form action="<form action="https://formspree.io/f/xldddlkr" method="POST" className="max-w-md mx-auto bg-white p-6 rounded-xl shadow-sm border border-gray-100">
            <div className="mb-4">
              <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">Name</label>
              <input
