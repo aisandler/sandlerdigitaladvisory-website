@@ -1,1 +1,2 @@
-# sandlerdigitaladvisory-website
+# sandlerdigital-website
+SandlerDigital.ai website
