@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { db } from '../firebase';
+import { db } from '../config/firebase';
 import { doc, updateDoc, arrayUnion } from 'firebase/firestore';
 
 export default function MeetingScheduler({ clientId }) {

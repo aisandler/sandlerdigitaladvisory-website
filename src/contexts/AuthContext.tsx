@@ -5,7 +5,7 @@ import {
   onAuthStateChanged,
   type User
 } from 'firebase/auth';
-import { auth } from '../firebase';
+import { auth } from '../config/firebase';
 
 // Define the shape of our context
 type AuthContextType = {

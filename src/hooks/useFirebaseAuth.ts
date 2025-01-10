@@ -5,7 +5,7 @@ import {
   onAuthStateChanged,
   type User
 } from 'firebase/auth';
-import { auth } from '../firebase';
+import { auth } from '../config/firebase';
 
 export function useFirebaseAuth() {
   const [user, setUser] = useState<User | null>(null);
