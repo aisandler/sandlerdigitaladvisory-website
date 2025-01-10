@@ -1,9 +1,8 @@
 import { useState, useEffect } from 'react';
 import { UserProfile, ClientGroup } from '../../types/user';
-import { db } from '../../firebase';
+import { db, auth } from '../../config/firebase';
 import { collection, query, getDocs, addDoc, doc, setDoc } from 'firebase/firestore';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '../../firebase';
 import { useAuth } from '../../providers/AuthProvider';
 import dynamic from 'next/dynamic';
 
