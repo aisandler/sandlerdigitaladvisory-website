@@ -35,6 +35,8 @@ export default function ClientPortalPage() {
 
     const fetchData = async () => {
       try {
+        if (!auth.user?.uid) return;
+
         const userDoc = await getDoc(doc(db, 'users', auth.user.uid));
         if (userDoc.exists()) {
           const userData = userDoc.data() as UserProfile;
@@ -49,11 +51,12 @@ export default function ClientPortalPage() {
         }
       } catch (error) {
         console.error('Error fetching data:', error);
+        router.push('/login');
       }
     };
 
     fetchData();
-  }, [authChecked, auth.user]);
+  }, [authChecked, auth.user, router]);
 
   // Don't render until mounted
   if (!mounted) return null;
