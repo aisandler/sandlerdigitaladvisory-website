@@ -1,6 +1,0 @@
-{
-  "../components/dashboards/AdminDashboard.tsx -> ./ClientDashboard": {
-    "id": "../components/dashboards/AdminDashboard.tsx -> ./ClientDashboard",
-    "files": []
-  }
-}
