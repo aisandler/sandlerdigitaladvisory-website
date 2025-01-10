@@ -1,5 +1,5 @@
 import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '../../../firebase';
+import { auth } from '../../../config/firebase';
 import { createUserProfile, assignUserToGroup } from '../../../utils/userManagement';
 
 export async function signUpNewClient(email: string, password: string, groupId?: string) {

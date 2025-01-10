@@ -1,27 +1,57 @@
-import { useEffect } from 'react';
+import { useAuth } from '../contexts/AuthContext';
 import { useRouter } from 'next/router';
-import { useAuth } from '../providers/AuthProvider';
-import Dashboard from '../components/Dashboard';
+import { useEffect, useState } from 'react';
+import ClientDashboard from '../components/dashboards/ClientDashboard';
+import { db } from '../config/firebase';
+import { doc, getDoc } from 'firebase/firestore';
+import type { UserProfile, ClientGroup } from '../types/user';
 
-export default function ClientPortal() {
-  const { user, loading } = useAuth();
+export default function ClientPortalPage() {
   const router = useRouter();
+  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
+  const [clientGroup, setClientGroup] = useState<ClientGroup | null>(null);
 
-  useEffect(() => {
-    if (!loading && !user) {
-      router.replace('/login');
-    }
-  }, [user, loading, router]);
-
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-      </div>
-    );
+  if (typeof window === 'undefined') {
+    return null;
   }
 
-  if (!user) return null;
+  const { user } = useAuth();
 
-  return <Dashboard />;
-} 
+  useEffect(() => {
+    if (!user) {
+      router.push('/login');
+      return;
+    }
+
+    // Fetch user profile and client group
+    const fetchData = async () => {
+      const userDoc = await getDoc(doc(db, 'users', user.uid));
+      if (userDoc.exists()) {
+        const userData = userDoc.data() as UserProfile;
+        setUserProfile(userData);
+
+        if (userData.clientGroupId) {
+          const groupDoc = await getDoc(doc(db, 'clientGroups', userData.clientGroupId));
+          if (groupDoc.exists()) {
+            setClientGroup(groupDoc.data() as ClientGroup);
+          }
+        }
+      }
+    };
+
+    fetchData();
+  }, [user, router]);
+
+  if (!user || !userProfile || !clientGroup) return null;
+
+  return <ClientDashboard 
+    userProfile={userProfile}
+    clientGroup={clientGroup}
+  />;
+}
+
+export const getServerSideProps = async () => {
+  return {
+    props: {},
+  };
+}; 

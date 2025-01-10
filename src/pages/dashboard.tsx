@@ -4,8 +4,13 @@ import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 
 export default function DashboardPage() {
-  const { user } = useAuth();
   const router = useRouter();
+
+  if (typeof window === 'undefined') {
+    return null;
+  }
+
+  const { user } = useAuth();
 
   useEffect(() => {
     if (!user) {
@@ -16,4 +21,10 @@ export default function DashboardPage() {
   if (!user) return null;
 
   return <Dashboard />;
-} 
+}
+
+export const getServerSideProps = async () => {
+  return {
+    props: {},
+  };
+}; 
