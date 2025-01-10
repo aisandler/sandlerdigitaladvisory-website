@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { UserProfile, ClientGroup } from '../../types/user';
 import { useAuth } from '../../providers/AuthProvider';
 import Link from 'next/link';
+import { db } from '../../config/firebase';
 
 interface EconocoDashboardProps {
   userProfile: UserProfile;

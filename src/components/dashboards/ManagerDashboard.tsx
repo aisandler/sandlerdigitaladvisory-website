@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { UserProfile, ClientGroup } from '../../types/user';
-import { db } from '../../firebase';
+import { db } from '../../config/firebase';
 import { collection, query, where, getDocs } from 'firebase/firestore';
 
 interface ManagerDashboardProps {
