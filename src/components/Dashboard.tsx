@@ -5,7 +5,7 @@ import { UserProfile, ClientGroup } from '../types/user';
 import AdminDashboard from './dashboards/AdminDashboard';
 import ClientDashboard from './dashboards/ClientDashboard';
 import ManagerDashboard from './dashboards/ManagerDashboard';
-import { db } from '../firebase';
+import { db } from '../config/firebase';
 import { getDoc, doc } from 'firebase/firestore';
 import LoadingSpinner from './LoadingSpinner';
 import ErrorMessage from './ErrorMessage';
