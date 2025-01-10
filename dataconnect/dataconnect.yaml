@@ -1,0 +1,12 @@
+specVersion: "v1beta"
+serviceId: "sandlerdigitaladvisory-website-main"
+location: "us-central1"
+schema:
+  source: "./schema"
+  datasource:
+    postgresql:
+      database: "fdcdb"
+      cloudSql:
+        instanceId: "sandlerdigitaladvisory-website-main-fdc"
+      # schemaValidation: "COMPATIBLE"
+connectorDirs: ["./connector"]
