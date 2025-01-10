@@ -147,7 +147,7 @@ export default function AdminDashboard({ userProfile }: AdminDashboardProps) {
     const clientViewProfile: UserProfile = {
       ...userProfile,
       role: 'client',
-      clientGroupId: clientGroups[0]?.id || null // Use first group or null
+      clientGroupId: clientGroups[0]?.id || undefined
     };
 
     return (
