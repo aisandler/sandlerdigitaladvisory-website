@@ -1,51 +1,73 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { useRouter } from 'next/router';
 import { 
   signInWithEmailAndPassword,
-  signOut,
+  signOut as firebaseSignOut,
   onAuthStateChanged,
   type User
 } from 'firebase/auth';
 import { auth } from '../config/firebase';
 
-// Define the shape of our context
-type AuthContextType = {
+interface AuthContextType {
   user: User | null;
+  loading: boolean;
   signIn: (email: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;
+  isAdminViewingAsClient: boolean;
+  setAdminViewingAsClient: (value: boolean) => void;
+}
+
+// Provide a default value that matches the interface
+const defaultContext: AuthContextType = {
+  user: null,
+  loading: true,
+  signIn: async () => { throw new Error('AuthContext not initialized') },
+  signOut: async () => { throw new Error('AuthContext not initialized') },
+  isAdminViewingAsClient: false,
+  setAdminViewingAsClient: () => { throw new Error('AuthContext not initialized') }
 };
 
-// Create the context
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+const AuthContext = createContext<AuthContextType>(defaultContext);
 
-// Provider component
+export function useAuth() {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
+  return context;
+}
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [isAdminViewingAsClient, setAdminViewingAsClient] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
-    // Set up auth state observer
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setUser(user);
+      setLoading(false);
     });
 
-    // Cleanup subscription
     return () => unsubscribe();
   }, []);
 
-  // Auth methods
-  const signInWithEmail = async (email: string, password: string) => {
+  const signIn = async (email: string, password: string) => {
     try {
       const result = await signInWithEmailAndPassword(auth, email, password);
       setUser(result.user);
+      router.replace('/client-portal');
     } catch (error) {
       console.error('Sign in error:', error);
       throw error;
     }
   };
 
-  const signOutUser = async () => {
+  const signOut = async () => {
     try {
-      await signOut(auth);
+      await firebaseSignOut(auth);
       setUser(null);
+      router.replace('/login');
     } catch (error) {
       console.error('Sign out error:', error);
       throw error;
@@ -54,8 +76,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const value = {
     user,
-    signIn: signInWithEmail,
-    signOut: signOutUser,
+    loading,
+    signIn,
+    signOut,
+    isAdminViewingAsClient,
+    setAdminViewingAsClient
   };
 
   return (
@@ -63,13 +88,4 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       {children}
     </AuthContext.Provider>
   );
-}
-
-// Custom hook to use auth
-export function useAuth() {
-  const context = useContext(AuthContext);
-  if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
-  return context;
 } 
