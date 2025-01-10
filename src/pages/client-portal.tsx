@@ -10,14 +10,18 @@ export default function ClientPortalPage() {
   const router = useRouter();
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [clientGroup, setClientGroup] = useState<ClientGroup | null>(null);
+  const [mounted, setMounted] = useState(false);
 
-  if (typeof window === 'undefined') {
-    return null;
-  }
-
-  const { user } = useAuth();
+  // Use useAuth after checking for client-side
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
+    if (!mounted) return;
+
+    const { user } = useAuth();
+    
     if (!user) {
       router.push('/login');
       return;
@@ -40,8 +44,12 @@ export default function ClientPortalPage() {
     };
 
     fetchData();
-  }, [user, router]);
+  }, [mounted, router]);
 
+  // Don't render anything until mounted
+  if (!mounted) return null;
+
+  const { user } = useAuth();
   if (!user || !userProfile || !clientGroup) return null;
 
   return <ClientDashboard 
