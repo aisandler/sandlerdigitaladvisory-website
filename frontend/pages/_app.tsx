@@ -3,10 +3,9 @@ import Head from 'next/head';
 import { AuthProvider } from '../contexts/AuthContext';
 import '../styles/globals.css';
 
-// Initialize Firebase last to ensure all dependencies are loaded
-import '../config/firebase';
-
-export default function App({ Component, pageProps }: AppProps) {
+function App({ Component, pageProps }: AppProps) {
+  console.log('App component rendering, about to mount AuthProvider');
+  
   return (
     <AuthProvider>
       <Head>
@@ -16,4 +15,6 @@ export default function App({ Component, pageProps }: AppProps) {
       <Component {...pageProps} />
     </AuthProvider>
   );
-} 
+}
+
+export default App; 
