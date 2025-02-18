@@ -1,15 +1,6 @@
 import { getApps, cert, initializeApp, App } from 'firebase-admin/app';
 import { getAuth } from 'firebase-admin/auth';
 import { getFirestore } from 'firebase-admin/firestore';
-import { config } from 'dotenv';
-import { resolve } from 'path';
-
-// Load environment variables from the appropriate .env file
-const envPath = process.env.NODE_ENV === 'development' 
-  ? resolve(__dirname, '../scripts/.env')
-  : resolve(__dirname, '../.env.local');
-
-config({ path: envPath });
 
 // Initialize Firebase Admin if it hasn't been initialized yet
 function initAdmin() {
