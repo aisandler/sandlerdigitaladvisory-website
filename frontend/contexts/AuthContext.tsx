@@ -5,10 +5,10 @@ import {
   signInWithPopup,
   signOut as firebaseSignOut,
   onAuthStateChanged,
-  type User
 } from 'firebase/auth';
 import { doc, getDoc } from 'firebase/firestore';
 import { auth, db, googleProvider } from '../config/firebase';
+import type { User } from '../types/user';
 
 type AuthContextType = {
   user: User | null;
