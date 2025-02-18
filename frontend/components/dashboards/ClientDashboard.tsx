@@ -1,9 +1,7 @@
 import React from 'react';
 import { UserProfile, ClientGroup } from '../../types/user';
-import { Project, Activity, FileItem } from '../../types/portal';
 import { useAuth } from '../../contexts/AuthContext';
 import { useRouter } from 'next/router';
-import ProjectComponentsGrid from '../grids/ProjectComponentsGrid';
 
 interface ClientDashboardProps {
   userProfile: UserProfile | null;

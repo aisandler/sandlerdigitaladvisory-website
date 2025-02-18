@@ -1,9 +1,1 @@
-{
-  "/_app": "pages/_app.js",
-  "/_error": "pages/_error.js",
-  "/_document": "pages/_document.js",
-  "/client-portal": "pages/client-portal.js",
-  "/login": "pages/login.js",
-  "/": "pages/index.js",
-  "/api/client-portal-data": "pages/api/client-portal-data.js"
-}
+{"/_app":"pages/_app.js","/api/auth/signup":"pages/api/auth/signup.js","/api/auth/logout":"pages/api/auth/logout.js","/api/auth/session":"pages/api/auth/session.js","/api/auth/verify-session":"pages/api/auth/verify-session.js","/api/client-portal-data":"pages/api/client-portal-data.js","/assessment":"pages/assessment.html","/":"pages/index.html","/login":"pages/login.html","/dashboard":"pages/dashboard.js","/client-portal":"pages/client-portal.js","/_error":"pages/_error.js","/_document":"pages/_document.js","/404":"pages/404.html"}
