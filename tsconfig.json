@@ -20,10 +20,10 @@
       }
     ],
     "paths": {
-      "@/*": ["src/*"],
-      "@assessment/*": ["src/assessment-app/src/*"],
-      "@components/*": ["src/assessment-app/src/components/*"],
-      "@ui/*": ["src/assessment-app/src/components/ui/*"]
+      "@/*": ["frontend/*"],
+      "@lib/*": ["frontend/lib/*"],
+      "@components/*": ["frontend/components/*"],
+      "@ui/*": ["frontend/components/ui/*"]
     },
     "baseUrl": "."
   },
@@ -32,7 +32,7 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    "src/assessment-app/**/*"
+    "frontend/**/*"
   ],
   "exclude": ["node_modules"]
 } 
