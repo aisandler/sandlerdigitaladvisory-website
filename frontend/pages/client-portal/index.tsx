@@ -1,38 +1,69 @@
-import { useEffect } from 'react';
-import { useRouter } from 'next/router';
 import { useAuth } from '../../contexts/AuthContext';
-import Dashboard from '../../components/Dashboard';
+import { useRouter } from 'next/router';
+import { useEffect, useState } from 'react';
+import ClientDashboard from '../../components/dashboards/ClientDashboard';
 import LoadingSpinner from '../../components/LoadingSpinner';
+import type { UserProfile, ClientGroup } from '../../types/user';
 
-export default function ClientPortal() {
+export default function ClientPortalPage() {
+  const { user, loading } = useAuth(); // Get user and loading state from AuthContext
   const router = useRouter();
-  const { user, loading } = useAuth();
+  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
+  const [clientGroup, setClientGroup] = useState<ClientGroup | null>(null);
+  const [dataLoading, setDataLoading] = useState(false); // Separate loading state for data fetching
 
   useEffect(() => {
-    async function verifySession() {
-      try {
-        const response = await fetch('/api/auth/verify-session');
-        if (!response.ok) {
-          throw new Error('Invalid session');
-        }
-      } catch (error) {
-        console.error('Session verification error:', error);
-        router.replace('/login');
-      }
+    if (!loading && !user) {
+      router.push('/login');
+      return;
     }
 
-    if (!loading && !user) {
-      verifySession();
+    if (user?.uid) {
+      const fetchData = async () => {
+        setDataLoading(true); // Start data loading
+        try {
+          // Fetch data from the NEW API endpoint: /api/client-portal-data
+          const response = await fetch('/api/client-portal-data'); // Changed URL here
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+          const data = await response.json();
+          setUserProfile(data.userProfile);
+          setClientGroup(data.clientGroup);
+        } catch (error) {
+          console.error('Error fetching client portal data:', error);
+          // Keep the error message, or handle differently as needed
+          // router.push('/login'); // Maybe don't redirect to login on data fetch error
+        } finally {
+          setDataLoading(false); // End data loading
+        }
+      };
+
+      fetchData();
     }
   }, [user, loading, router]);
 
-  if (loading) {
+  // Show loading spinner during initial auth loading or data loading
+  if (loading || dataLoading) {
     return <LoadingSpinner />;
   }
 
-  if (!user) {
-    return null;
+  if (!user || !userProfile || !clientGroup) {
+    return <div>Error loading data. Please try again.</div>; // Basic error message
   }
 
-  return <Dashboard />;
-} 
+  console.log('userProfile before ClientDashboard:', userProfile);
+  console.log('clientGroup before ClientDashboard:', clientGroup);
+
+  return <ClientDashboard
+    userProfile={userProfile}
+    clientGroup={clientGroup}
+  />;
+}
+
+// Force server-side rendering (optional, but might be good for initial load)
+export const getServerSideProps = async () => {
+  return {
+    props: {},
+  };
+}; 

@@ -1,72 +1,21 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { UserProfile, ClientGroup } from '../../types/user';
 import { Project, Activity, FileItem } from '../../types/portal';
 import { useAuth } from '../../contexts/AuthContext';
 import { useRouter } from 'next/router';
-import { db } from '../../config/firebase';
-import { collection, query, where, getDocs } from 'firebase/firestore';
-import LoadingSpinner from '../LoadingSpinner';
+import ProjectComponentsGrid from '../grids/ProjectComponentsGrid';
 
 interface ClientDashboardProps {
-  userProfile: UserProfile;
+  userProfile: UserProfile | null;
   clientGroup: ClientGroup | null;
 }
 
-export default function ClientDashboard({ userProfile, clientGroup }: ClientDashboardProps) {
+const ClientDashboard: React.FC<ClientDashboardProps> = ({ userProfile, clientGroup }) => {
+  console.log("ClientDashboard props received:", { userProfile, clientGroup });
+
   const { signOut, user } = useAuth();
   const router = useRouter();
   const isEconoco = clientGroup?.name.toLowerCase().includes('econoco');
-  const [projects, setProjects] = useState<Project[]>([]);
-  const [activities, setActivities] = useState<Activity[]>([]);
-  const [documents, setDocuments] = useState<FileItem[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    async function fetchClientData() {
-      if (!user) return;
-
-      try {
-        // Fetch projects
-        const projectsQuery = query(
-          collection(db, 'projects'),
-          where('clientId', '==', user.uid)
-        );
-        const projectsSnapshot = await getDocs(projectsQuery);
-        const projectsData = projectsSnapshot.docs.map(
-          doc => ({ ...doc.data(), id: doc.id }) as Project
-        );
-        setProjects(projectsData);
-
-        // Fetch activities
-        const activitiesQuery = query(
-          collection(db, 'activities'),
-          where('userId', '==', user.uid)
-        );
-        const activitiesSnapshot = await getDocs(activitiesQuery);
-        const activitiesData = activitiesSnapshot.docs.map(
-          doc => ({ ...doc.data(), id: doc.id }) as Activity
-        );
-        setActivities(activitiesData);
-
-        // Fetch documents
-        const documentsQuery = query(
-          collection(db, 'files'),
-          where('projectId', 'in', projectsData.map(p => p.id))
-        );
-        const documentsSnapshot = await getDocs(documentsQuery);
-        const documentsData = documentsSnapshot.docs.map(
-          doc => ({ ...doc.data(), id: doc.id }) as FileItem
-        );
-        setDocuments(documentsData);
-      } catch (error) {
-        console.error('Error fetching client data:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    }
-
-    fetchClientData();
-  }, [user]);
 
   const handleSignOut = async () => {
     try {
@@ -122,10 +71,6 @@ export default function ClientDashboard({ userProfile, clientGroup }: ClientDash
     }
   ];
 
-  if (isLoading) {
-    return <LoadingSpinner />;
-  }
-
   return (
     <div className="min-h-screen bg-gray-100">
       <nav className="bg-white shadow">
@@ -135,7 +80,7 @@ export default function ClientDashboard({ userProfile, clientGroup }: ClientDash
               <h1 className="text-xl font-semibold">Digital Marketing Strategy & Implementation Plan</h1>
             </div>
             <div className="flex items-center gap-4">
-              <span className="text-gray-600">{userProfile.email}</span>
+              <span className="text-gray-600">{userProfile?.email}</span>
               <button
                 onClick={handleSignOut}
                 className="px-4 py-2 text-sm font-medium text-red-600 hover:text-red-800 hover:bg-red-50 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
@@ -208,36 +153,7 @@ export default function ClientDashboard({ userProfile, clientGroup }: ClientDash
           <div className="bg-white p-6 rounded-lg shadow">
             <h2 className="text-xl font-semibold mb-4">Project Timeline and Key Milestones</h2>
             <div className="space-y-4">
-              {projects.map((project) => (
-                <div key={project.id} className="border-l-4 border-blue-500 pl-4">
-                  <div className="flex items-center justify-between">
-                    <h3 className="text-lg font-medium text-gray-900">
-                      {project.title}
-                    </h3>
-                    <span className={`px-2 py-1 text-sm rounded-full ${
-                      project.status === 'active'
-                        ? 'bg-green-100 text-green-800'
-                        : project.status === 'completed'
-                        ? 'bg-blue-100 text-blue-800'
-                        : 'bg-gray-100 text-gray-600'
-                    }`}>
-                      {project.status}
-                    </span>
-                  </div>
-                  <div className="mt-4 space-y-3">
-                    {project.phases.map((phase) => (
-                      <div key={phase.id} className="bg-gray-50 p-3 rounded-md">
-                        <div className="flex justify-between items-center">
-                          <h4 className="text-sm font-medium">{phase.title}</h4>
-                          <span className="text-xs text-gray-500">
-                            {new Date(phase.startDate).toLocaleDateString()} - {phase.endDate ? new Date(phase.endDate).toLocaleDateString() : 'Ongoing'}
-                          </span>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              ))}
+              {/* Add project timeline content here */}
             </div>
           </div>
 
@@ -254,30 +170,13 @@ export default function ClientDashboard({ userProfile, clientGroup }: ClientDash
               </a>
             </div>
             <div className="divide-y divide-gray-200">
-              {documents.map((doc) => (
-                <div key={doc.id} className="py-4 flex items-center justify-between">
-                  <div>
-                    <h3 className="text-sm font-medium text-gray-900">
-                      {doc.name}
-                    </h3>
-                    <p className="text-xs text-gray-500">
-                      Last modified: {new Date(doc.lastModified).toLocaleDateString()}
-                    </p>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <a
-                      href={doc.path}
-                      className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-blue-700 bg-blue-100 hover:bg-blue-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                    >
-                      View
-                    </a>
-                  </div>
-                </div>
-              ))}
+              {/* Add document list content here */}
             </div>
           </div>
         </div>
       </main>
     </div>
   );
-} 
+}
+
+export default ClientDashboard; 

@@ -7,7 +7,7 @@ const firebaseConfig = {
   apiKey: "AIzaSyCW1J7vqYyhSCaB4egJlmwFj0b1Efyd75I",
   authDomain: "sda-client-portal.firebaseapp.com",
   projectId: "sda-client-portal",
-  storageBucket: "sda-client-portal.appspot.com",
+  storageBucket: "sda-client-portal.firebasestorage.app",
   messagingSenderId: "608424811993",
   appId: "1:608424811993:web:da7b03d4fc620cb65a4dc8"
 };
