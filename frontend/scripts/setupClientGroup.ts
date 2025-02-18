@@ -1,14 +1,10 @@
-import { config } from 'dotenv';
-import { resolve } from 'path';
+// @ts-nocheck
 import { db } from '../config/firebase-admin';
 
-// Load environment variables from scripts/.env
-config({ path: resolve(__dirname, '.env') });
+const clientGroupId = 'group-1736484195520'; // Your existing group ID
+const userId = 'cs34xjeLlQOWWhA3Z48DXC2q3nD3'; // Your user ID
 
 async function setupClientGroup() {
-  const clientGroupId = 'group-1736484195520'; // Your existing group ID
-  const userId = 'cs34xjeLlQOWWhA3Z48DXC2q3nD3'; // Your user ID
-
   const clientGroupData = {
     id: clientGroupId,
     name: 'Econoco',
@@ -33,5 +29,7 @@ async function setupClientGroup() {
   }
 }
 
-// Run the setup
-setupClientGroup(); 
+// Only run the setup if this file is being executed directly
+if (require.main === module) {
+  setupClientGroup();
+} 
