@@ -4,9 +4,6 @@ import { ArrowRight, Lightbulb, BarChart, Network } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 export default function HomePage() {
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  
-  // Add refs for sections
   const servicesRef = useRef<HTMLDivElement>(null);
   const expertiseRef = useRef<HTMLDivElement>(null);
   const contactRef = useRef<HTMLDivElement>(null);
@@ -82,34 +79,6 @@ export default function HomePage() {
     }
   ];
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-    const form = e.currentTarget;
-    const formData = new FormData(form);
-
-    try {
-      const response = await fetch('https://formspree.io/f/xldddlkr', {
-        method: 'POST',
-        body: formData,
-        headers: {
-          'Accept': 'application/json'
-        }
-      });
-
-      if (response.ok) {
-        alert('Thanks for your submission!');
-        form.reset();
-      } else {
-        alert('Oops! There was a problem submitting your form');
-      }
-    } catch (error) {
-      alert('Oops! There was a problem submitting your form');
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
   return (
     <div className="relative min-h-screen bg-gradient-to-b from-white to-blue-50 overflow-hidden">
       {/* Navigation */}
@@ -118,25 +87,15 @@ export default function HomePage() {
           <Link href="/" className="text-xl font-bold bg-gradient-to-r from-blue-600 to-violet-600 text-transparent bg-clip-text">
             SandlerDigitalAdvisory
           </Link>
-          
           <div className="flex items-center gap-8">
             <div className="hidden md:flex items-center gap-8">
-              <button 
-                onClick={() => scrollToSection(servicesRef)}
-                className="text-gray-600 hover:text-blue-600 transition-all"
-              >
+              <button onClick={() => scrollToSection(servicesRef)} className="text-gray-600 hover:text-blue-600 transition-all">
                 Services
               </button>
-              <button
-                onClick={() => scrollToSection(expertiseRef)}
-                className="text-gray-600 hover:text-blue-600 transition-all"
-              >
+              <button onClick={() => scrollToSection(expertiseRef)} className="text-gray-600 hover:text-blue-600 transition-all">
                 Expertise
               </button>
-              <Link 
-                href="/client-portal"
-                className="bg-gradient-to-r from-blue-600 to-violet-600 text-white px-5 py-2 rounded-full hover:shadow-lg hover:shadow-blue-500/20 transition-all"
-              >
+              <Link href="/client-portal" className="bg-gradient-to-r from-blue-600 to-violet-600 text-white px-5 py-2 rounded-full hover:shadow-lg hover:shadow-blue-500/20 transition-all">
                 Client Portal
               </Link>
             </div>
@@ -154,11 +113,9 @@ export default function HomePage() {
                 Strategic Digital Leadership
               </span>
             </h1>
-            
             <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
               Expert guidance for digital transformation, strategy development, and organizational change.
             </p>
-            
             <div className="flex gap-4 justify-center">
               <button
                 onClick={() => scrollToSection(contactRef)}
@@ -206,7 +163,6 @@ export default function HomePage() {
                 Combining deep industry knowledge with technical expertise to deliver transformative results
               </p>
             </div>
-            
             <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
               {expertiseAreas.map((area, index) => (
                 <motion.div
@@ -219,9 +175,7 @@ export default function HomePage() {
                   <h3 className="text-2xl font-bold mb-4 bg-gradient-to-r from-blue-600 to-violet-600 text-transparent bg-clip-text">
                     {area.title}
                   </h3>
-                  <p className="text-gray-600 mb-6">
-                    {area.description}
-                  </p>
+                  <p className="text-gray-600 mb-6">{area.description}</p>
                   <ul className="space-y-3">
                     {area.points.map((point, i) => (
                       <li key={i} className="flex items-center gap-3">
@@ -232,26 +186,6 @@ export default function HomePage() {
                   </ul>
                 </motion.div>
               ))}
-            </div>
-
-            <div className="mt-16 text-center">
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.6 }}
-                className="inline-block bg-white p-6 rounded-2xl shadow-lg"
-              >
-                <p className="text-lg text-gray-600 mb-4">
-                  Ready to transform your organization?
-                </p>
-                <button
-                  onClick={() => scrollToSection(contactRef)}
-                  className="bg-gradient-to-r from-blue-600 to-violet-600 text-white px-8 py-3 rounded-full shadow-lg shadow-blue-500/20 flex items-center gap-2 mx-auto hover:shadow-xl transition-shadow"
-                >
-                  Start Your Journey
-                  <ArrowRight className="h-4 w-4" />
-                </button>
-              </motion.div>
             </div>
           </motion.div>
         </div>
