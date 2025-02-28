@@ -258,61 +258,60 @@ export default function HomePage() {
       </section>
 
       {/* Contact Form */}
-      <section ref={contactRef} className="py-16" id="contact">
-        <div className="max-w-xl mx-auto px-4">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="bg-white p-8 rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)]"
-          >
-            <div className="text-center mb-8">
-              <h2 className="text-3xl font-bold mb-4">Start Your Digital Transformation</h2>
-              <p className="text-gray-600">
-                Schedule a consultation to discuss your digital transformation goals.
-              </p>
-            </div>
-
-            <form onSubmit={handleSubmit} className="space-y-4">
-              {['Name', 'Email', 'Company'].map((field, index) => (
-                <motion.div
-                  key={field}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.1 }}
-                >
-                  <input
-                    type={field === 'Email' ? 'email' : 'text'}
-                    name={field.toLowerCase()}
-                    placeholder={field}
-                    required
-                    className="w-full p-3 rounded-lg border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all outline-none"
-                  />
-                </motion.div>
-              ))}
-              
-              <motion.button
-                type="submit"
-                disabled={isSubmitting}
-                whileHover={{ scale: isSubmitting ? 1 : 1.02 }}
-                className="w-full bg-gradient-to-r from-blue-600 to-violet-600 text-white p-4 rounded-lg shadow-lg shadow-blue-500/20 flex items-center justify-center gap-2 mt-6 disabled:opacity-70"
-              >
-                {isSubmitting ? (
-                  <>
-                    Sending...
-                    <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-                    </svg>
-                  </>
-                ) : (
-                  <>
-                    Schedule Consultation
-                    <ArrowRight className="h-4 w-4" />
-                  </>
-                )}
-              </motion.button>
-            </form>
+      <section ref={contactRef} className="py-16 bg-gray-50" id="contact">
+        <div className="max-w-6xl mx-auto px-4">
+          <motion.div {...fadeInUp} className="text-center mb-8">
+            <h2 className="text-3xl font-bold mb-4">Start Your Digital Transformation</h2>
+            <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
+              Schedule a consultation to discuss your digital transformation goals.
+            </p>
           </motion.div>
+
+          <motion.form
+            {...fadeInUp}
+            action="https://formspree.io/f/xldddlkr"
+            method="POST"
+            className="max-w-md mx-auto bg-white p-6 rounded-xl shadow-sm border border-gray-100"
+          >
+            <div className="mb-4">
+              <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">Name</label>
+              <input
+                type="text"
+                id="name"
+                name="name"
+                required
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+              />
+            </div>
+            <div className="mb-4">
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                required
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+              />
+            </div>
+            <div className="mb-4">
+              <label htmlFor="company" className="block text-sm font-medium text-gray-700 mb-1">Company</label>
+              <input
+                type="text"
+                id="company"
+                name="company"
+                required
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+              />
+            </div>
+            <input type="hidden" name="_next" value="https://sandlerdigitaladvisory.com/#contact" />
+            <button
+              type="submit"
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium text-lg flex items-center justify-center"
+            >
+              Schedule Consultation
+              <ArrowRight className="ml-2 h-5 w-5" />
+            </button>
+          </motion.form>
         </div>
       </section>
 
