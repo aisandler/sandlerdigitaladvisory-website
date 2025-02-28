@@ -1,12 +1,108 @@
 import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 import { BanknotesIcon, ArrowTrendingUpIcon, ChartBarIcon } from '@heroicons/react/24/outline';
+import { useEffect, useRef } from 'react';
+import * as THREE from 'three';
 
 const Hero = () => {
   const [ref, inView] = useInView({
     triggerOnce: true,
     threshold: 0.1,
   });
+
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const sceneRef = useRef<{
+    scene: THREE.Scene;
+    camera: THREE.PerspectiveCamera;
+    renderer: THREE.WebGLRenderer;
+    geometries: THREE.Mesh[];
+  } | null>(null);
+
+  useEffect(() => {
+    if (!canvasRef.current) return;
+
+    // Initialize Three.js scene
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer({
+      canvas: canvasRef.current,
+      alpha: true,
+      antialias: true,
+    });
+
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(window.devicePixelRatio);
+    camera.position.z = 30;
+
+    // Create geometric shapes
+    const geometries: THREE.Mesh[] = [];
+    const materials = [
+      new THREE.MeshBasicMaterial({ color: 0x3b82f6, wireframe: true, transparent: true, opacity: 0.1 }),
+      new THREE.MeshBasicMaterial({ color: 0x60a5fa, wireframe: true, transparent: true, opacity: 0.1 }),
+    ];
+
+    // Add various geometric shapes
+    for (let i = 0; i < 15; i++) {
+      let geometry;
+      const random = Math.random();
+      
+      if (random < 0.33) {
+        geometry = new THREE.IcosahedronGeometry(Math.random() * 2 + 1);
+      } else if (random < 0.66) {
+        geometry = new THREE.OctahedronGeometry(Math.random() * 2 + 1);
+      } else {
+        geometry = new THREE.TetrahedronGeometry(Math.random() * 2 + 1);
+      }
+
+      const mesh = new THREE.Mesh(geometry, materials[Math.floor(Math.random() * materials.length)]);
+      
+      // Position randomly but within view
+      mesh.position.x = (Math.random() - 0.5) * 40;
+      mesh.position.y = (Math.random() - 0.5) * 40;
+      mesh.position.z = (Math.random() - 0.5) * 30;
+      
+      // Random rotation
+      mesh.rotation.x = Math.random() * Math.PI;
+      mesh.rotation.y = Math.random() * Math.PI;
+      
+      geometries.push(mesh);
+      scene.add(mesh);
+    }
+
+    // Animation loop
+    const animate = () => {
+      requestAnimationFrame(animate);
+
+      geometries.forEach((mesh) => {
+        mesh.rotation.x += 0.001;
+        mesh.rotation.y += 0.001;
+      });
+
+      renderer.render(scene, camera);
+    };
+
+    // Handle window resize
+    const handleResize = () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    };
+
+    window.addEventListener('resize', handleResize);
+    animate();
+
+    // Store references for cleanup
+    sceneRef.current = { scene, camera, renderer, geometries };
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      geometries.forEach(mesh => {
+        mesh.geometry.dispose();
+        (mesh.material as THREE.Material).dispose();
+      });
+      renderer.dispose();
+    };
+  }, []);
 
   const quickStats = [
     {
@@ -40,12 +136,14 @@ const Hero = () => {
         <div className="absolute inset-0 bg-gradient-to-t from-transparent via-blue-500/5 to-transparent"></div>
       </div>
 
-      {/* Animated background shapes */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute -top-1/2 -left-1/2 w-full h-full bg-gradient-to-br from-blue-500/10 to-transparent rounded-full blur-3xl animate-slow-spin"></div>
-        <div className="absolute -bottom-1/2 -right-1/2 w-full h-full bg-gradient-to-tl from-blue-600/10 to-transparent rounded-full blur-3xl animate-slow-spin-reverse"></div>
-      </div>
+      {/* Three.js canvas for geometric shapes */}
+      <canvas
+        ref={canvasRef}
+        className="absolute inset-0 w-full h-full"
+        style={{ pointerEvents: 'none' }}
+      />
 
+      {/* Content */}
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
