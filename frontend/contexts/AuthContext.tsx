@@ -29,21 +29,28 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const router = useRouter();
 
   useEffect(() => {
+    let isSubscribed = true;
     console.log('Setting up auth state listener');
+    
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       try {
+        if (!isSubscribed) return;
+
         if (firebaseUser) {
           console.log('User authenticated:', firebaseUser.uid);
           const userDoc = await getDoc(doc(db, 'users', firebaseUser.uid));
           
           if (!userDoc.exists()) {
             console.log('User document not found, signing out');
-            await signOut();
-            setUser(null);
-            router.push('/login');
+            await firebaseSignOut(auth);
+            if (isSubscribed) {
+              setUser(null);
+              router.push('/login');
+            }
             return;
           }
 
+          // Only create session if user document exists
           const idToken = await firebaseUser.getIdToken(true);
           await fetch('/api/auth/session', {
             method: 'POST',
@@ -52,24 +59,33 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             body: JSON.stringify({ idToken }),
           });
 
-          setUser(firebaseUser);
+          if (isSubscribed) {
+            setUser(firebaseUser);
+          }
         } else {
           console.log('No user authenticated');
-          setUser(null);
+          if (isSubscribed) {
+            setUser(null);
+          }
         }
       } catch (error) {
         console.error('Auth state change error:', error);
-        setUser(null);
+        if (isSubscribed) {
+          setUser(null);
+        }
       } finally {
-        setLoading(false);
+        if (isSubscribed) {
+          setLoading(false);
+        }
       }
     });
 
     return () => {
+      isSubscribed = false;
       console.log('Cleaning up auth state listener');
       unsubscribe();
     };
-  }, [router]);
+  }, []); // Empty dependency array since we only want to set up the listener once
 
   const signIn = async (email: string, password: string): Promise<void> => {
     console.log('SignIn function called with:', email);
